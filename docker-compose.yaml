@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  product:
+    build: ./product
+
+  review:
+    build: ./review

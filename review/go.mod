@@ -1,4 +1,4 @@
-module github.com/purwandi/istio/product
+module github.com/purwandi/istio/reviews
 
 go 1.14
 
