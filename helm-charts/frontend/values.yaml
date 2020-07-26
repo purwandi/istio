@@ -1,0 +1,12 @@
+serviceName: frontend
+
+image:
+  repository: registry.gitlab.com/purwandi/istio/frontend
+  tag: latest
+  pullPolicy: Always
+
+deployment:
+  replicas: 2
+  environments:
+    PRODUCT_SERVICE: http://product:8080
+    REVIEW_SERVICE: http://review:8080

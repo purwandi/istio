@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.serviceName }}
+    app.kubernetes.io/name: {{ .Values.serviceName }}
+    app.kubernetes.io/instance: {{ .Values.image.tag }}
+  name: {{ .Values.serviceName }}
+  namespace: app
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.serviceName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.serviceName }}
+        app.kubernetes.io/name: {{ .Values.serviceName }}
+        app.kubernetes.io/instance: {{ .Values.image.tag }}
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        name: {{ .Values.serviceName }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+          {{- range $key, $value := .Values.deployment.environments }}
+          - name: {{ $key }}
+            value: {{ $value }}
+          {{ end }}

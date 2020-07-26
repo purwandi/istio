@@ -1,0 +1,10 @@
+serviceName: product
+
+image:
+  repository: registry.gitlab.com/purwandi/istio/product
+  tag: latest
+  pullPolicy: Always
+
+deployment:
+  replicas: 1
+  environments:

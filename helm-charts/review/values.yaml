@@ -1,0 +1,10 @@
+serviceName: review
+
+image:
+  repository: registry.gitlab.com/purwandi/istio/review
+  tag: latest
+  pullPolicy: Always
+
+deployment:
+  replicas: 1
+  environments:
