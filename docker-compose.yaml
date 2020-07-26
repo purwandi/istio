@@ -6,3 +6,13 @@ services:
 
   review:
     build: ./review
+
+  frontend:
+    build: ./frontend
+    environment:
+      PRODUCT_SERVICE: http://product:8080
+      REVIEW_SERVICE: http://review:8080
+    ports:
+      - 8080:8080
+    volumes:
+      - ./frontend:/app

@@ -1,0 +1,14 @@
+extends ./layouts/master.pug
+
+block content
+  h1 Products List
+
+  div 
+    each product in products 
+      div 
+        div
+          a(href=`/${product.id}`)= product.id 
+        div= product.name 
+        div= product.price
+    else 
+      div There is no product in store

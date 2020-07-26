@@ -1,0 +1,25 @@
+extends ./layouts/master.pug
+
+block content
+  h1 Product
+  div 
+    div= product.id 
+    div= product.name 
+    div= product.price
+
+  h4 Reviews
+  div 
+    form(method="post", action=`/review/${product.id}`)
+      div 
+        textarea(name="comment", cols="30", rows="5", placeholder="Leave a comment")
+      div
+        input(type="number", name="rating", placeholder="Leave a rating", min="0", max="5")
+      div
+        button(type="submit") Add a comment
+    each review in reviews
+      div
+        div= review.comment
+        div= review.rating
+        div= review.created_at
+    else
+      div There is no review on this product

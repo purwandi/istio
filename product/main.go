@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 // Product ...``
@@ -68,7 +69,15 @@ func (app *AppProduct) Detail(c echo.Context) error {
 	for _, item := range app.Store {
 		if item.ID == id {
 			product = item
+			break
 		}
+	}
+
+	if (Product{}) == product {
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"status": "error",
+			"error":  "product not found",
+		})
 	}
 
 	return c.JSON(http.StatusOK, product)
@@ -96,6 +105,8 @@ func (app *AppProduct) Create(c echo.Context) error {
 
 func main() {
 	e := echo.New()
+	e.Use(middleware.Logger())
+
 	app := NewAppProduct()
 	app.Mount(e)
 
