@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   labels:
     app: {{ .Values.serviceName }}
+    version: {{ .Values.image.tag }}
     app.kubernetes.io/name: {{ .Values.serviceName }}
     app.kubernetes.io/instance: {{ .Values.image.tag }}
   name: {{ .Values.serviceName }}
@@ -16,6 +17,7 @@ spec:
     metadata:
       labels:
         app: {{ .Values.serviceName }}
+        version: {{ .Values.image.tag }}
         app.kubernetes.io/name: {{ .Values.serviceName }}
         app.kubernetes.io/instance: {{ .Values.image.tag }}
     spec:
