@@ -13,6 +13,7 @@ spec:
   selector:
     matchLabels:
       app: {{ .Values.serviceName }}
+      version: {{ .Values.image.tag }}
   template:
     metadata:
       labels:
