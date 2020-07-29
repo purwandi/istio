@@ -11,7 +11,7 @@ metadata:
 spec:
   ports:
     - port: 8080
-      name: tcp-8080
+      name: http-8080
       protocol: TCP
       targetPort: 8080
   selector:
@@ -42,7 +42,7 @@ metadata:
   namespace: app
 spec:
   hosts:
-    - "*"
+    - frontend.local
   gateways:
     - {{ .Values.serviceName }}-gwy
   http:
@@ -66,7 +66,7 @@ spec:
   servers:
   - port:
       number: 80
-      name: http-80
+      name: "http-{{ .Values.serviceName }}"
       protocol: HTTP
     hosts:
-      - 'frontend.local'
+      - frontend.local
