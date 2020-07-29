@@ -6,7 +6,7 @@ image:
   pullPolicy: Always
 
 deployment:
-  replicas: 2
+  replicas: 1
   environments:
     PRODUCT_SERVICE: http://product:8080
     REVIEW_SERVICE: http://review:8080

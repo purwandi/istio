@@ -1,0 +1,9 @@
+serviceName: webserver
+
+image:
+  repository: nginx
+  tag: alpine
+  pullPolicy: Always
+
+deployment:
+  replicas: 1

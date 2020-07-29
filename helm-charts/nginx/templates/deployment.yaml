@@ -27,4 +27,6 @@ spec:
         name: {{ .Values.serviceName }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-          - containerPort: 8080
+          - containerPort: 80
+
+---

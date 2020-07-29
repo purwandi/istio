@@ -13,7 +13,7 @@ spec:
     - port: 8080
       name: tcp-8080
       protocol: TCP
-      targetPort: 8080
+      targetPort: 80
   selector:
     app: {{ .Values.serviceName }}
 
@@ -42,7 +42,7 @@ metadata:
   namespace: app
 spec:
   hosts:
-    - product.local
+    - "*"
   gateways:
     - {{ .Values.serviceName }}-gwy
   http:
@@ -50,7 +50,7 @@ spec:
         - destination:
             host: {{ .Values.serviceName }}
             subset: {{ .Values.image.tag }}
-            port: 
+            port:
               number: 8080
 
 ---
@@ -62,11 +62,11 @@ metadata:
   namespace: app
 spec:
   selector:
-    istio: ingressgateway
+    istio: ingressgateway # use istio default controller
   servers:
   - port:
       number: 80
-      name: http-80
+      name: http
       protocol: HTTP
     hosts:
-    - product.local
+    - "frontend.dev"

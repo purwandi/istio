@@ -22,6 +22,7 @@ spec:
         app.kubernetes.io/name: {{ .Values.serviceName }}
         app.kubernetes.io/instance: {{ .Values.image.tag }}
     spec:
+      serviceAccountName: "app-{{ .Values.serviceName }}"
       containers:
       - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         name: {{ .Values.serviceName }}
@@ -31,3 +32,5 @@ spec:
           - name: {{ $key }}
             value: {{ $value }}
           {{ end }}
+        ports:
+          - containerPort: 8080

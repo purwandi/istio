@@ -11,6 +11,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'pug')
 
+app.get('/ping', (req, res) => {
+  return res.json({ status: "ok" });
+})
+
 // Register the route
 app.get('/', async (req, res) => {
   try {
