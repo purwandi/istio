@@ -1,0 +1,53 @@
+persistence:
+  enabled: false
+
+env: 
+  GF_AUTH_BASIC_ENABLED: "false"
+  GF_AUTH_ANONYMOUS_ENABLED: "true"
+  GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server
+        access: proxy
+        isDefault: true
+        editable: true
+        jsonData:
+          timeInterval: 5s
+        orgId: 1
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: 'istio'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/istio
+
+dashboards:
+  istio:
+    citadel-dashboard:
+      file: dashboards/citadel-dashboard.json
+    galley-dashboard:
+      file: dashboards/galley-dashboard.json
+    istio-mesh-dashboard:
+      file: dashboards/istio-mesh-dashboard.json
+    istio-performance-dashboard:
+      file: dashboards/istio-performance-dashboard.json
+    istio-service-dashboard:
+      file: dashboards/istio-service-dashboard.json
+    istio-workload-dashboard:
+      file: dashboards/istio-workload-dashboard.json
+    mixer-dashboard:
+      file: dashboards/mixer-dashboard.json
+    pilot-dashboard:
+      file: dashboards/pilot-dashboard.json
