@@ -1,0 +1,13 @@
+resources:
+  repositories:
+    - repository: purwandi
+      type: github
+      endpoint: github
+      name: purwandi/azure-pipeline-templates
+      ref: refs/heads/master
+
+jobs:
+  - template: job--go.yaml@purwandi
+    parameters:
+      os: linux
+      workspace: product
