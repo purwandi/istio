@@ -25,7 +25,13 @@ server:
   extraVolumeMounts:
     - mountPath: /etc/istio-certs
       name: istio-certs
-  extraVolumes: 
+  extraVolumes:
+    # Istio 1.6
+    - configMap:
+        name: istio
+        optional: true
+      name: istio-config-volume 
+
     - emptyDir:
         medium: Memory
       name: istio-certs
@@ -48,38 +54,19 @@ server:
     enabled: false
 
 
+  # Istio 1.6
   sidecarContainers:
     - args:
       - proxy
       - sidecar
       - --domain
       - $(POD_NAMESPACE).svc.cluster.local
-      - --configPath
-      - /etc/istio/proxy
-      - --binaryPath
-      - /usr/local/bin/envoy
-      - --serviceCluster
       - istio-proxy-prometheus
-      - --drainDuration
-      - 45s
-      - --parentShutdownDuration
-      - 1m0s
-      - --discoveryAddress
-      - istio-pilot.istio-system.svc:15012
       - --proxyLogLevel=warning
       - --proxyComponentLogLevel=misc:error
-      - --connectTimeout
-      - 10s
-      - --proxyAdminPort
-      - "15000"
       - --controlPlaneAuthPolicy
       - NONE
-      - --dnsRefreshRate
-      - 300s
-      - --statusPort
-      - "15020"
       - --trust-domain=cluster.local
-      - --controlPlaneBootstrap=false
       env:
       - name: OUTPUT_CERTS
         value: /etc/istio-certs
@@ -88,7 +75,7 @@ server:
       - name: PILOT_CERT_PROVIDER
         value: istiod
       - name: CA_ADDR
-        value: istio-pilot.istio-system.svc:15012
+        value: istiod.istio-system.svc:15012
       - name: POD_NAME
         valueFrom:
           fieldRef:
@@ -109,20 +96,12 @@ server:
         valueFrom:
           fieldRef:
             fieldPath: status.hostIP
-      - name: ISTIO_META_POD_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.name
-      - name: ISTIO_META_CONFIG_NAMESPACE
-        valueFrom:
-          fieldRef:
-            fieldPath: metadata.namespace
       - name: ISTIO_META_MESH_ID
         value: cluster.local
       - name: ISTIO_META_CLUSTER_ID
         value: Kubernetes
-      image: docker.io/istio/proxyv2:1.5.8
-      imagePullPolicy: IfNotPresent
+      image: docker.io/istio/proxyv2:1.6.7
+      imagePullPolicy: Always
       name: istio-proxy
       ports:
       - containerPort: 15090
@@ -147,6 +126,109 @@ server:
         name: istio-token
       - mountPath: /etc/istio-certs/
         name: istio-certs
+      - mountPath: /etc/istio/config
+        name: istio-config-volume
+
+  # Istio 1.5
+  # sidecarContainers:
+  #   - args:
+  #     - proxy
+  #     - sidecar
+  #     - --domain
+  #     - $(POD_NAMESPACE).svc.cluster.local
+  #     - --configPath
+  #     - /etc/istio/proxy
+  #     - --binaryPath
+  #     - /usr/local/bin/envoy
+  #     - --serviceCluster
+  #     - istio-proxy-prometheus
+  #     - --drainDuration
+  #     - 45s
+  #     - --parentShutdownDuration
+  #     - 1m0s
+  #     - --discoveryAddress
+  #     - istio-pilot.istio-system.svc:15012
+  #     - --proxyLogLevel=warning
+  #     - --proxyComponentLogLevel=misc:error
+  #     - --connectTimeout
+  #     - 10s
+  #     - --proxyAdminPort
+  #     - "15000"
+  #     - --controlPlaneAuthPolicy
+  #     - NONE
+  #     - --dnsRefreshRate
+  #     - 300s
+  #     - --statusPort
+  #     - "15020"
+  #     - --trust-domain=cluster.local
+  #     - --controlPlaneBootstrap=false
+  #     env:
+  #     - name: OUTPUT_CERTS
+  #       value: /etc/istio-certs
+  #     - name: JWT_POLICY
+  #       value: third-party-jwt
+  #     - name: PILOT_CERT_PROVIDER
+  #       value: istiod
+  #     - name: CA_ADDR
+  #       value: istio-pilot.istio-system.svc:15012
+  #     - name: POD_NAME
+  #       valueFrom:
+  #         fieldRef:
+  #           fieldPath: metadata.name
+  #     - name: POD_NAMESPACE
+  #       valueFrom:
+  #         fieldRef:
+  #           fieldPath: metadata.namespace
+  #     - name: INSTANCE_IP
+  #       valueFrom:
+  #         fieldRef:
+  #           fieldPath: status.podIP
+  #     - name: SERVICE_ACCOUNT
+  #       valueFrom:
+  #         fieldRef:
+  #           fieldPath: spec.serviceAccountName
+  #     - name: HOST_IP
+  #       valueFrom:
+  #         fieldRef:
+  #           fieldPath: status.hostIP
+  #     - name: ISTIO_META_POD_NAME
+  #       valueFrom:
+  #         fieldRef:
+  #           fieldPath: metadata.name
+  #     - name: ISTIO_META_CONFIG_NAMESPACE
+  #       valueFrom:
+  #         fieldRef:
+  #           fieldPath: metadata.namespace
+  #     - name: ISTIO_META_MESH_ID
+  #       value: cluster.local
+  #     - name: ISTIO_META_CLUSTER_ID
+  #       value: Kubernetes
+  #     image: docker.io/istio/proxyv2:1.5.8
+  #     imagePullPolicy: IfNotPresent
+  #     name: istio-proxy
+  #     ports:
+  #     - containerPort: 15090
+  #       name: http-envoy-prom
+  #       protocol: TCP
+  #     readinessProbe:
+  #       failureThreshold: 30
+  #       httpGet:
+  #         path: /healthz/ready
+  #         port: 15020
+  #         scheme: HTTP
+  #       initialDelaySeconds: 1
+  #       periodSeconds: 2
+  #       successThreshold: 1
+  #       timeoutSeconds: 1
+  #     volumeMounts:
+  #     - mountPath: /var/run/secrets/istio
+  #       name: istiod-ca-cert
+  #     - mountPath: /etc/istio/proxy
+  #       name: istio-envoy
+  #     - mountPath: /var/run/secrets/tokens
+  #       name: istio-token
+  #     - mountPath: /etc/istio-certs/
+  #       name: istio-certs
 
 serverFiles:
   prometheus.yml:
@@ -220,10 +302,18 @@ serverFiles:
           - istio-system
 
       relabel_configs:
+      # Istio 1.5
+      # - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+      #   action: keep
+      #   regex: istio-pilot;http-monitoring
+
+      # Istio 1.6
       - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
         action: keep
-        regex: istio-pilot;http-monitoring
+        regex: istiod;http-monitoring
 
+      - source_labels: [__meta_kubernetes_service_label_app]
+        target_label: app
     - job_name: 'galley'
       kubernetes_sd_configs:
       - role: endpoints

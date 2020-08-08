@@ -26,5 +26,4 @@ for chart in ./helm-charts/$SERVICE-service/templates/*.yaml; do
 done
 
 cp ./helm-charts/$SERVICE/*.yaml ./helm-charts/$SERVICE-service/
-sleep 2
 helm upgrade $SERVICE-service ./helm-charts/$SERVICE-service/ --install --debug
